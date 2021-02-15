@@ -12,18 +12,26 @@ main <- sidebarLayout(
     
   ),
   mainPanel(
-    plotOutput(outputId = "p")
+    plotOutput(outputId = "budget_per_year")
   )
 )
 
 ui <- fluidPage(title, main)
 
-#total expenses of 2019
+#total expenses per year
 server <- function(input, output) {
-  output$p <- renderPlot({
-    ggplot(data, aes(x = Month, y = Total)) +
-      geom_bar(stat="identity") +
-      scale_x_discrete(limits=data[1:12,]$Month)
+  
+  output$budget_per_year <- renderPlot({
+    
+    data$Year <- as.factor(data$Year)
+    
+    ggplot(data, aes(x = Month, y = Total, group = Year, fill = Year)) +
+      geom_bar(stat="identity", position = "dodge") +
+      scale_x_discrete(limits = month.name) +
+      theme_classic() +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      scale_fill_brewer()
+    
   })
 }
 
